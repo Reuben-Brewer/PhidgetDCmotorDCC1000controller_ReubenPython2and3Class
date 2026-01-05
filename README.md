@@ -5,11 +5,9 @@ PhidgetDCmotorDCC1000controller_ReubenPython2and3Class
 Wrapper (including ability to hook to Tkinter GUI) to control 1 DC (NOT brushless/BLDC) motor
 with optional encoder feedback via VINT (also has analog voltage and digital inputs).
 Supports both velocity and position control modes.
-
 STILL NEED TO ADD CALLBACK FUNCTIONS FOR READING ENCODER, ANALOG VOLTAGE, AND DIGITAL INPUT.
 
 From Phidgets' website:
-
 "Control one high-current brushed DC motor with this powerful Phidget.
 The encoder input and analog input can enable precise control motor velocity and position."
 
@@ -27,15 +25,15 @@ www.reubotics.com
 
 Apache 2 License
 
-Software Revision F, 05/10/2023
+Software Revision G, 12/31/2025
 
-Verified working on: 
+Verified working on:
 
-Python 2.7, 3.8
+Python 3.12/13
 
-Windows 8.1, 10 64-bit
+Windows 10/11 64-bit
 
-Raspberry Pi Buster 
+Raspberry Pi Bookworm
 
 (no Mac testing yet, but might work while not in GUI-mode)
 
@@ -45,13 +43,13 @@ Raspberry Pi Buster
 
 ########################### Python module installation instructions, all OS's
 
-PhidgetDCmotorDCC1000controller_ReubenPython2and3Class, ListOfModuleDependencies: ['future.builtins', 'LowPassFilter_ReubenPython2and3Class', 'Phidget22', 'PhidgetsCurrentSensor30ampDConlyVCP1100_ReubenPython2and3Class']
+PhidgetDCmotorDCC1000controller_ReubenPython2and3Class, ListOfModuleDependencies: ['LowPassFilter_ReubenPython2and3Class', 'Phidget22', 'PhidgetsCurrentSensor30ampDConlyVCP1100_ReubenPython2and3Class', 'ReubenGithubCodeModulePaths']
 
-PhidgetDCmotorDCC1000controller_ReubenPython2and3Class, ListOfModuleDependencies_TestProgram: ['MyPrint_ReubenPython2and3Class']
+PhidgetDCmotorDCC1000controller_ReubenPython2and3Class, ListOfModuleDependencies_TestProgram: ['keyboard', 'MyPlotterPureTkinterStandAloneProcess_ReubenPython2and3Class', 'MyPrint_ReubenPython2and3Class', 'ReubenGithubCodeModulePaths']
 
-PhidgetDCmotorDCC1000controller_ReubenPython2and3Class, ListOfModuleDependencies_NestedLayers: ['future.builtins', 'LowPassFilterForDictsOfLists_ReubenPython2and3Class', 'numpy', 'Phidget22']
+PhidgetDCmotorDCC1000controller_ReubenPython2and3Class, ListOfModuleDependencies_NestedLayers: ['GetCPUandMemoryUsageOfProcessByPID_ReubenPython3Class', 'LowPassFilterForDictsOfLists_ReubenPython2and3Class', 'numpy', 'pexpect', 'Phidget22', 'psutil', 'pyautogui', 'ReubenGithubCodeModulePaths']
 
-PhidgetDCmotorDCC1000controller_ReubenPython2and3Class, ListOfModuleDependencies_All:['future.builtins', 'LowPassFilter_ReubenPython2and3Class', 'LowPassFilterForDictsOfLists_ReubenPython2and3Class', 'MyPrint_ReubenPython2and3Class', 'numpy', 'Phidget22', 'PhidgetsCurrentSensor30ampDConlyVCP1100_ReubenPython2and3Class']
+PhidgetDCmotorDCC1000controller_ReubenPython2and3Class, ListOfModuleDependencies_All:['GetCPUandMemoryUsageOfProcessByPID_ReubenPython3Class', 'keyboard', 'LowPassFilter_ReubenPython2and3Class', 'LowPassFilterForDictsOfLists_ReubenPython2and3Class', 'MyPlotterPureTkinterStandAloneProcess_ReubenPython2and3Class', 'MyPrint_ReubenPython2and3Class', 'numpy', 'pexpect', 'Phidget22', 'PhidgetsCurrentSensor30ampDConlyVCP1100_ReubenPython2and3Class', 'psutil', 'pyautogui', 'ReubenGithubCodeModulePaths']
 
 https://pypi.org/project/Phidget22/#files
 
