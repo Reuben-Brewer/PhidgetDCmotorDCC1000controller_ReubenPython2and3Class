@@ -2,16 +2,24 @@
 
 '''
 Reuben Brewer, Ph.D.
-reuben.brewer@gmail.com
+reuben.brewer@gmail.com,
 www.reubotics.com
 
 Apache 2 License
-Software Revision F, 05/10/2023
+Software Revision G, 12/31/2025
 
-Verified working on: Python 2.7, 3.8 for Windows 8.1, 10 64-bit and Raspberry Pi Buster (works on Mac without GUI enabled).
+Verified working on: Python 3.12/13 for Windows 10/11 64-bit and Raspberry Pi Bookworm (no Mac testing yet, but might work while not in GUI-mode).
 '''
 
 __author__ = 'reuben.brewer'
+
+##########################################################################################################
+##########################################################################################################
+
+###########################################################
+import ReubenGithubCodeModulePaths #Replaces the need to have "ReubenGithubCodeModulePaths.pth" within "C:\Anaconda3\Lib\site-packages".
+ReubenGithubCodeModulePaths.Enable()
+###########################################################
 
 ###########################################################
 from LowPassFilter_ReubenPython2and3Class import *
@@ -29,33 +37,15 @@ import collections
 from copy import * #for deepcopy
 import inspect #To enable 'TellWhichFileWereIn'
 import threading
+import queue as Queue
 import traceback
 ###########################################################
 
 ###########################################################
-if sys.version_info[0] < 3:
-    from Tkinter import * #Python 2
-    import tkFont
-    import ttk
-else:
-    from tkinter import * #Python 3
-    import tkinter.font as tkFont #Python 3
-    from tkinter import ttk
+from tkinter import *
+import tkinter.font as tkFont
+from tkinter import ttk
 ###########################################################
-
-###########################################################
-if sys.version_info[0] < 3:
-    import Queue  # Python 2
-else:
-    import queue as Queue  # Python 3
-###########################################################
-
-###########################################################
-if sys.version_info[0] < 3:
-    from builtins import raw_input as input
-else:
-    from future.builtins import input as input
-########################################################### "sudo pip3 install future" (Python 3) AND "sudo pip install future" (Python 2)
 
 ###########################################################
 import platform
@@ -78,11 +68,14 @@ from Phidget22.Devices.DCMotor import * #Velocity control
 from Phidget22.Devices.MotorPositionController import * #Position Control
 ###########################################################
 
+##########################################################################################################
+##########################################################################################################
+
 class PhidgetDCmotorDCC1000controller_ReubenPython2and3Class(Frame): #Subclass the Tkinter Frame
 
     ##########################################################################################################
     ##########################################################################################################
-    def __init__(self, setup_dict):
+    def __init__(self, SetupDict):
 
         print("#################### PhidgetDCmotorDCC1000controller_ReubenPython2and3Class __init__ starting. ####################")
 
@@ -93,7 +86,7 @@ class PhidgetDCmotorDCC1000controller_ReubenPython2and3Class(Frame): #Subclass t
         self.MainThread_still_running_flag = 0
         self.ThisIsFirstTimeEverAttachingFlag = 1
         self.PhidgetsDeviceConnectedFlag = 0
-        self.DC30AmpCurrentSensor_OPEN_FLAG = 0
+        self.PhidgetsCurrentSensor30ampDConlyVCP1100_OPEN_FLAG = 0
         #########################################################
 
         #########################################################
@@ -203,8 +196,8 @@ class PhidgetDCmotorDCC1000controller_ReubenPython2and3Class(Frame): #Subclass t
 
         #########################################################
         #########################################################
-        if "GUIparametersDict" in setup_dict:
-            self.GUIparametersDict = setup_dict["GUIparametersDict"]
+        if "GUIparametersDict" in SetupDict:
+            self.GUIparametersDict = SetupDict["GUIparametersDict"]
 
             #########################################################
             if "USE_GUI_FLAG" in self.GUIparametersDict:
@@ -213,14 +206,6 @@ class PhidgetDCmotorDCC1000controller_ReubenPython2and3Class(Frame): #Subclass t
                 self.USE_GUI_FLAG = 0
 
             print("PhidgetDCmotorDCC1000controller_ReubenPython2and3Class __init__: USE_GUI_FLAG: " + str(self.USE_GUI_FLAG))
-            #########################################################
-
-            #########################################################
-            if "root" in self.GUIparametersDict:
-                self.root = self.GUIparametersDict["root"]
-            else:
-                print("PhidgetDCmotorDCC1000controller_ReubenPython2and3Class __init__: Error, must pass in 'root'")
-                return
             #########################################################
 
             #########################################################
@@ -333,8 +318,8 @@ class PhidgetDCmotorDCC1000controller_ReubenPython2and3Class(Frame): #Subclass t
 
         #########################################################
         #########################################################
-        if "UsePhidgetsLoggingInternalToThisClassObjectFlag" in setup_dict:
-            self.UsePhidgetsLoggingInternalToThisClassObjectFlag = self.PassThrough0and1values_ExitProgramOtherwise("UsePhidgetsLoggingInternalToThisClassObjectFlag", setup_dict["UsePhidgetsLoggingInternalToThisClassObjectFlag"])
+        if "UsePhidgetsLoggingInternalToThisClassObjectFlag" in SetupDict:
+            self.UsePhidgetsLoggingInternalToThisClassObjectFlag = self.PassThrough0and1values_ExitProgramOtherwise("UsePhidgetsLoggingInternalToThisClassObjectFlag", SetupDict["UsePhidgetsLoggingInternalToThisClassObjectFlag"])
         else:
             self.UsePhidgetsLoggingInternalToThisClassObjectFlag = 1
 
@@ -344,8 +329,8 @@ class PhidgetDCmotorDCC1000controller_ReubenPython2and3Class(Frame): #Subclass t
 
         #########################################################
         #########################################################
-        if "WaitForAttached_TimeoutDuration_Milliseconds" in setup_dict:
-            self.WaitForAttached_TimeoutDuration_Milliseconds = int(self.PassThroughFloatValuesInRange_ExitProgramOtherwise("WaitForAttached_TimeoutDuration_Milliseconds", setup_dict["WaitForAttached_TimeoutDuration_Milliseconds"], 0.0, 60000.0))
+        if "WaitForAttached_TimeoutDuration_Milliseconds" in SetupDict:
+            self.WaitForAttached_TimeoutDuration_Milliseconds = int(self.PassThroughFloatValuesInRange_ExitProgramOtherwise("WaitForAttached_TimeoutDuration_Milliseconds", SetupDict["WaitForAttached_TimeoutDuration_Milliseconds"], 0.0, 60000.0))
 
         else:
             self.WaitForAttached_TimeoutDuration_Milliseconds = 5000
@@ -356,9 +341,9 @@ class PhidgetDCmotorDCC1000controller_ReubenPython2and3Class(Frame): #Subclass t
 
         #########################################################
         #########################################################
-        if "VINT_DesiredSerialNumber" in setup_dict:
+        if "VINT_DesiredSerialNumber" in SetupDict:
             try:
-                self.VINT_DesiredSerialNumber = int(setup_dict["VINT_DesiredSerialNumber"])
+                self.VINT_DesiredSerialNumber = int(SetupDict["VINT_DesiredSerialNumber"])
             except:
                 print("PhidgetDCmotorDCC1000controller_ReubenPython2and3Class __init__: Error, VINT_DesiredSerialNumber invalid.")
         else:
@@ -370,9 +355,9 @@ class PhidgetDCmotorDCC1000controller_ReubenPython2and3Class(Frame): #Subclass t
 
         #########################################################
         #########################################################
-        if "VINT_DesiredPortNumber" in setup_dict:
+        if "VINT_DesiredPortNumber" in SetupDict:
             try:
-                self.VINT_DesiredPortNumber = int(setup_dict["VINT_DesiredPortNumber"])
+                self.VINT_DesiredPortNumber = int(SetupDict["VINT_DesiredPortNumber"])
             except:
                 print("PhidgetDCmotorDCC1000controller_ReubenPython2and3Class __init__: Error, VINT_DesiredPortNumber invalid.")
         else:
@@ -385,9 +370,37 @@ class PhidgetDCmotorDCC1000controller_ReubenPython2and3Class(Frame): #Subclass t
 
         #########################################################
         #########################################################
-        if "DesiredDeviceID" in setup_dict:
+        if "USE_PhidgetsCurrentSensor30ampDConlyVCP1100_FLAG" in SetupDict:
+            print("fuck")
+            self.USE_PhidgetsCurrentSensor30ampDConlyVCP1100_FLAG = self.PassThrough0and1values_ExitProgramOtherwise("USE_PhidgetsCurrentSensor30ampDConlyVCP1100_FLAG", SetupDict["USE_PhidgetsCurrentSensor30ampDConlyVCP1100_FLAG"])
+        else:
+            self.USE_PhidgetsCurrentSensor30ampDConlyVCP1100_FLAG = 0
+
+        print("PhidgetDCmotorDCC1000controller_ReubenPython2and3Class __init__: USE_PhidgetsCurrentSensor30ampDConlyVCP1100_FLAG: " + str(self.USE_PhidgetsCurrentSensor30ampDConlyVCP1100_FLAG))
+        #########################################################
+        #########################################################
+
+        #########################################################
+        #########################################################
+        if "VINT_DesiredPortNumber_PhidgetsCurrentSensor30ampDConlyVCP1100" in SetupDict:
             try:
-                self.DesiredDeviceID = int(setup_dict["DesiredDeviceID"])
+                self.VINT_DesiredPortNumber_PhidgetsCurrentSensor30ampDConlyVCP1100 = int(SetupDict["VINT_DesiredPortNumber_PhidgetsCurrentSensor30ampDConlyVCP1100"])
+            except:
+                print("PhidgetDCmotorDCC1000controller_ReubenPython2and3Class __init__: Error, VINT_DesiredPortNumber_PhidgetsCurrentSensor30ampDConlyVCP1100 invalid.")
+        else:
+            if self.USE_PhidgetsCurrentSensor30ampDConlyVCP1100_FLAG == 1:
+                print("PhidgetDCmotorDCC1000controller_ReubenPython2and3Class __init__: Error, must initialize object with 'VINT_DesiredPortNumber_PhidgetsCurrentSensor30ampDConlyVCP1100' argument.")
+                return
+
+        print("PhidgetDCmotorDCC1000controller_ReubenPython2and3Class __init__: VINT_DesiredPortNumber_PhidgetsCurrentSensor30ampDConlyVCP1100: " + str(self.VINT_DesiredPortNumber_PhidgetsCurrentSensor30ampDConlyVCP1100))
+        #########################################################
+        #########################################################
+
+        #########################################################
+        #########################################################
+        if "DesiredDeviceID" in SetupDict:
+            try:
+                self.DesiredDeviceID = int(SetupDict["DesiredDeviceID"])
             except:
                 print("PhidgetDCmotorDCC1000controller_ReubenPython2and3Class __init__: Error, DesiredDeviceID invalid.")
         else:
@@ -400,8 +413,8 @@ class PhidgetDCmotorDCC1000controller_ReubenPython2and3Class(Frame): #Subclass t
 
         #########################################################
         #########################################################
-        if "NameToDisplay_UserSet" in setup_dict:
-            self.NameToDisplay_UserSet = str(setup_dict["NameToDisplay_UserSet"])
+        if "NameToDisplay_UserSet" in SetupDict:
+            self.NameToDisplay_UserSet = str(SetupDict["NameToDisplay_UserSet"])
         else:
             self.NameToDisplay_UserSet = ""
 
@@ -411,8 +424,8 @@ class PhidgetDCmotorDCC1000controller_ReubenPython2and3Class(Frame): #Subclass t
 
         #########################################################
         #########################################################
-        if "MainThread_TimeToSleepEachLoop" in setup_dict:
-            self.MainThread_TimeToSleepEachLoop = self.PassThroughFloatValuesInRange_ExitProgramOtherwise("MainThread_TimeToSleepEachLoop", setup_dict["MainThread_TimeToSleepEachLoop"], 0.001, 100000)
+        if "MainThread_TimeToSleepEachLoop" in SetupDict:
+            self.MainThread_TimeToSleepEachLoop = self.PassThroughFloatValuesInRange_ExitProgramOtherwise("MainThread_TimeToSleepEachLoop", SetupDict["MainThread_TimeToSleepEachLoop"], 0.001, 100000)
 
         else:
             self.MainThread_TimeToSleepEachLoop = 0.005
@@ -423,8 +436,8 @@ class PhidgetDCmotorDCC1000controller_ReubenPython2and3Class(Frame): #Subclass t
 
         #########################################################
         #########################################################
-        if "ENABLE_GETS_MAINTHREAD" in setup_dict:
-            self.ENABLE_GETS_MAINTHREAD = int(setup_dict["ENABLE_GETS_MAINTHREAD"])
+        if "ENABLE_GETS_MAINTHREAD" in SetupDict:
+            self.ENABLE_GETS_MAINTHREAD = int(SetupDict["ENABLE_GETS_MAINTHREAD"])
 
             if self.ENABLE_GETS_MAINTHREAD != 0 and self.ENABLE_GETS_MAINTHREAD != 1:
                 print("PhidgetDCmotorDCC1000controller_ReubenPython2and3Class __init__: Error, ENABLE_GETS_MAINTHREAD in setup dict must be 0 or 1.")
@@ -438,8 +451,8 @@ class PhidgetDCmotorDCC1000controller_ReubenPython2and3Class(Frame): #Subclass t
 
         #########################################################
         #########################################################
-        if "ControlMode" in setup_dict:
-            self.ControlMode = str(setup_dict["ControlMode"]).lower()
+        if "ControlMode" in SetupDict:
+            self.ControlMode = str(SetupDict["ControlMode"]).lower()
 
             if self.ControlMode != "position" and self.ControlMode != "velocity":
                 print("PhidgetDCmotorDCC1000controller_ReubenPython2and3Class __init__: Error, ControlMode in setup dict must be 'position' or 'velocity'.")
@@ -453,12 +466,12 @@ class PhidgetDCmotorDCC1000controller_ReubenPython2and3Class(Frame): #Subclass t
 
         #########################################################
         #########################################################
-        if "UpdateDeltaT_ms" in setup_dict:
+        if "UpdateDeltaT_ms" in SetupDict:
             if self.ControlMode == "position":
-                self.UpdateDeltaT_ms = int(self.PassThroughFloatValuesInRange_ExitProgramOtherwise("UpdateDeltaT_ms", setup_dict["UpdateDeltaT_ms"], 20.0, 60000.0))
+                self.UpdateDeltaT_ms = int(self.PassThroughFloatValuesInRange_ExitProgramOtherwise("UpdateDeltaT_ms", SetupDict["UpdateDeltaT_ms"], 20.0, 60000.0))
 
             elif self.ControlMode == "velocity":
-                self.UpdateDeltaT_ms = int(self.PassThroughFloatValuesInRange_ExitProgramOtherwise("UpdateDeltaT_ms", setup_dict["UpdateDeltaT_ms"], 100.0, 60000.0))
+                self.UpdateDeltaT_ms = int(self.PassThroughFloatValuesInRange_ExitProgramOtherwise("UpdateDeltaT_ms", SetupDict["UpdateDeltaT_ms"], 100.0, 60000.0))
 
         else:
             if self.ControlMode == "position":
@@ -472,8 +485,8 @@ class PhidgetDCmotorDCC1000controller_ReubenPython2and3Class(Frame): #Subclass t
 
         #########################################################
         #########################################################
-        if "FailsafeTime_Milliseconds" in setup_dict:
-                self.FailsafeTime_Milliseconds = int(self.PassThroughFloatValuesInRange_ExitProgramOtherwise("FailsafeTime_Milliseconds", setup_dict["FailsafeTime_Milliseconds"], 500.0, 30000.0))
+        if "FailsafeTime_Milliseconds" in SetupDict:
+                self.FailsafeTime_Milliseconds = int(self.PassThroughFloatValuesInRange_ExitProgramOtherwise("FailsafeTime_Milliseconds", SetupDict["FailsafeTime_Milliseconds"], 500.0, 30000.0))
         else:
             if self.ControlMode == "position":
                 self.FailsafeTime_Milliseconds = int(1000.0)
@@ -484,8 +497,8 @@ class PhidgetDCmotorDCC1000controller_ReubenPython2and3Class(Frame): #Subclass t
 
         #########################################################
         #########################################################
-        if "CurrentLimit_Amps_Min_UserSet" in setup_dict:
-            self.CurrentLimit_Amps_Min_UserSet = self.PassThroughFloatValuesInRange_ExitProgramOtherwise("CurrentLimit_Amps_Min_UserSet", setup_dict["CurrentLimit_Amps_Min_UserSet"], self.CurrentLimit_Amps_Min_DeviceHardLimit, self.CurrentLimit_Amps_Max_DeviceHardLimit)
+        if "CurrentLimit_Amps_Min_UserSet" in SetupDict:
+            self.CurrentLimit_Amps_Min_UserSet = self.PassThroughFloatValuesInRange_ExitProgramOtherwise("CurrentLimit_Amps_Min_UserSet", SetupDict["CurrentLimit_Amps_Min_UserSet"], self.CurrentLimit_Amps_Min_DeviceHardLimit, self.CurrentLimit_Amps_Max_DeviceHardLimit)
 
         else:
             self.CurrentLimit_Amps_Min_UserSet = self.CurrentLimit_Amps_Min_DeviceHardLimit
@@ -496,8 +509,8 @@ class PhidgetDCmotorDCC1000controller_ReubenPython2and3Class(Frame): #Subclass t
 
         #########################################################
         #########################################################
-        if "CurrentLimit_Amps_Max_UserSet" in setup_dict:
-            self.CurrentLimit_Amps_Max_UserSet = self.PassThroughFloatValuesInRange_ExitProgramOtherwise("CurrentLimit_Amps_Max_UserSet", setup_dict["CurrentLimit_Amps_Max_UserSet"], self.CurrentLimit_Amps_Min_DeviceHardLimit, self.CurrentLimit_Amps_Max_DeviceHardLimit)
+        if "CurrentLimit_Amps_Max_UserSet" in SetupDict:
+            self.CurrentLimit_Amps_Max_UserSet = self.PassThroughFloatValuesInRange_ExitProgramOtherwise("CurrentLimit_Amps_Max_UserSet", SetupDict["CurrentLimit_Amps_Max_UserSet"], self.CurrentLimit_Amps_Min_DeviceHardLimit, self.CurrentLimit_Amps_Max_DeviceHardLimit)
 
         else:
             self.CurrentLimit_Amps_Max_UserSet = self.CurrentLimit_Amps_Max_DeviceHardLimit
@@ -508,8 +521,8 @@ class PhidgetDCmotorDCC1000controller_ReubenPython2and3Class(Frame): #Subclass t
 
         #########################################################
         #########################################################
-        if "PositionMinLimit_PhidgetsUnits_UserSet" in setup_dict:
-            self.PositionMinLimit_PhidgetsUnits_UserSet = setup_dict["PositionMinLimit_PhidgetsUnits_UserSet"]
+        if "PositionMinLimit_PhidgetsUnits_UserSet" in SetupDict:
+            self.PositionMinLimit_PhidgetsUnits_UserSet = SetupDict["PositionMinLimit_PhidgetsUnits_UserSet"]
         else:
             self.PositionMinLimit_PhidgetsUnits_UserSet = -7.24637681159e+12
 
@@ -519,8 +532,8 @@ class PhidgetDCmotorDCC1000controller_ReubenPython2and3Class(Frame): #Subclass t
 
         #########################################################
         #########################################################
-        if "PositionMaxLimit_PhidgetsUnits_UserSet" in setup_dict:
-            self.PositionMaxLimit_PhidgetsUnits_UserSet = setup_dict["PositionMaxLimit_PhidgetsUnits_UserSet"]
+        if "PositionMaxLimit_PhidgetsUnits_UserSet" in SetupDict:
+            self.PositionMaxLimit_PhidgetsUnits_UserSet = SetupDict["PositionMaxLimit_PhidgetsUnits_UserSet"]
         else:
             self.PositionMaxLimit_PhidgetsUnits_UserSet = 7.24637681159e+12
 
@@ -538,19 +551,19 @@ class PhidgetDCmotorDCC1000controller_ReubenPython2and3Class(Frame): #Subclass t
 
         #########################################################
         #########################################################
-        if "VelocityMinLimit_PhidgetsUnits_UserSet" in setup_dict:
+        if "VelocityMinLimit_PhidgetsUnits_UserSet" in SetupDict:
 
             if self.ControlMode == "position":
-                if setup_dict["VelocityMinLimit_PhidgetsUnits_UserSet"] > 0:
-                    self.VelocityMinLimit_PhidgetsUnits_UserSet = self.PassThroughFloatValuesInRange_ExitProgramOtherwise("VelocityMinLimit_PhidgetsUnits_UserSet", setup_dict["VelocityMinLimit_PhidgetsUnits_UserSet"], 0.0, 10000.0)
+                if SetupDict["VelocityMinLimit_PhidgetsUnits_UserSet"] > 0:
+                    self.VelocityMinLimit_PhidgetsUnits_UserSet = self.PassThroughFloatValuesInRange_ExitProgramOtherwise("VelocityMinLimit_PhidgetsUnits_UserSet", SetupDict["VelocityMinLimit_PhidgetsUnits_UserSet"], 0.0, 10000.0)
                 else:
-                    self.VelocityMinLimit_PhidgetsUnits_UserSet = self.PassThroughFloatValuesInRange_ExitProgramOtherwise("VelocityMinLimit_PhidgetsUnits_UserSet", setup_dict["VelocityMinLimit_PhidgetsUnits_UserSet"], -10000.0, 0.0)
+                    self.VelocityMinLimit_PhidgetsUnits_UserSet = self.PassThroughFloatValuesInRange_ExitProgramOtherwise("VelocityMinLimit_PhidgetsUnits_UserSet", SetupDict["VelocityMinLimit_PhidgetsUnits_UserSet"], -10000.0, 0.0)
 
             elif self.ControlMode == "velocity":
-                if setup_dict["VelocityMinLimit_PhidgetsUnits_UserSet"] > 0:
-                    self.VelocityMinLimit_PhidgetsUnits_UserSet = self.PassThroughFloatValuesInRange_ExitProgramOtherwise("VelocityMinLimit_PhidgetsUnits_UserSet", setup_dict["VelocityMinLimit_PhidgetsUnits_UserSet"], 0.0, 1.0)
+                if SetupDict["VelocityMinLimit_PhidgetsUnits_UserSet"] > 0:
+                    self.VelocityMinLimit_PhidgetsUnits_UserSet = self.PassThroughFloatValuesInRange_ExitProgramOtherwise("VelocityMinLimit_PhidgetsUnits_UserSet", SetupDict["VelocityMinLimit_PhidgetsUnits_UserSet"], 0.0, 1.0)
                 else:
-                    self.VelocityMinLimit_PhidgetsUnits_UserSet = self.PassThroughFloatValuesInRange_ExitProgramOtherwise("VelocityMinLimit_PhidgetsUnits_UserSet", setup_dict["VelocityMinLimit_PhidgetsUnits_UserSet"], -1.0, 0.0)
+                    self.VelocityMinLimit_PhidgetsUnits_UserSet = self.PassThroughFloatValuesInRange_ExitProgramOtherwise("VelocityMinLimit_PhidgetsUnits_UserSet", SetupDict["VelocityMinLimit_PhidgetsUnits_UserSet"], -1.0, 0.0)
 
         else:
             if self.ControlMode == "position":
@@ -565,19 +578,19 @@ class PhidgetDCmotorDCC1000controller_ReubenPython2and3Class(Frame): #Subclass t
 
         #########################################################
         #########################################################
-        if "VelocityMaxLimit_PhidgetsUnits_UserSet" in setup_dict:
+        if "VelocityMaxLimit_PhidgetsUnits_UserSet" in SetupDict:
 
             if self.ControlMode == "position":
-                if setup_dict["VelocityMaxLimit_PhidgetsUnits_UserSet"] > 0:
-                    self.VelocityMaxLimit_PhidgetsUnits_UserSet = self.PassThroughFloatValuesInRange_ExitProgramOtherwise("VelocityMaxLimit_PhidgetsUnits_UserSet", setup_dict["VelocityMaxLimit_PhidgetsUnits_UserSet"], 0.0, 10000.0)
+                if SetupDict["VelocityMaxLimit_PhidgetsUnits_UserSet"] > 0:
+                    self.VelocityMaxLimit_PhidgetsUnits_UserSet = self.PassThroughFloatValuesInRange_ExitProgramOtherwise("VelocityMaxLimit_PhidgetsUnits_UserSet", SetupDict["VelocityMaxLimit_PhidgetsUnits_UserSet"], 0.0, 10000.0)
                 else:
-                    self.VelocityMaxLimit_PhidgetsUnits_UserSet = self.PassThroughFloatValuesInRange_ExitProgramOtherwise("VelocityMaxLimit_PhidgetsUnits_UserSet", setup_dict["VelocityMaxLimit_PhidgetsUnits_UserSet"], -10000.0, 0.0)
+                    self.VelocityMaxLimit_PhidgetsUnits_UserSet = self.PassThroughFloatValuesInRange_ExitProgramOtherwise("VelocityMaxLimit_PhidgetsUnits_UserSet", SetupDict["VelocityMaxLimit_PhidgetsUnits_UserSet"], -10000.0, 0.0)
 
             elif self.ControlMode == "velocity":
-                if setup_dict["VelocityMaxLimit_PhidgetsUnits_UserSet"] > 0:
-                    self.VelocityMaxLimit_PhidgetsUnits_UserSet = self.PassThroughFloatValuesInRange_ExitProgramOtherwise("VelocityMaxLimit_PhidgetsUnits_UserSet", setup_dict["VelocityMaxLimit_PhidgetsUnits_UserSet"], 0.0, 1.0)
+                if SetupDict["VelocityMaxLimit_PhidgetsUnits_UserSet"] > 0:
+                    self.VelocityMaxLimit_PhidgetsUnits_UserSet = self.PassThroughFloatValuesInRange_ExitProgramOtherwise("VelocityMaxLimit_PhidgetsUnits_UserSet", SetupDict["VelocityMaxLimit_PhidgetsUnits_UserSet"], 0.0, 1.0)
                 else:
-                    self.VelocityMaxLimit_PhidgetsUnits_UserSet = self.PassThroughFloatValuesInRange_ExitProgramOtherwise("VelocityMaxLimit_PhidgetsUnits_UserSet", setup_dict["VelocityMaxLimit_PhidgetsUnits_UserSet"], -1.0, 0.0)
+                    self.VelocityMaxLimit_PhidgetsUnits_UserSet = self.PassThroughFloatValuesInRange_ExitProgramOtherwise("VelocityMaxLimit_PhidgetsUnits_UserSet", SetupDict["VelocityMaxLimit_PhidgetsUnits_UserSet"], -1.0, 0.0)
 
         else:
             if self.ControlMode == "position":
@@ -600,8 +613,8 @@ class PhidgetDCmotorDCC1000controller_ReubenPython2and3Class(Frame): #Subclass t
 
         #########################################################
         #########################################################
-        if "BrakingStrengthLimit_VelControl_Percent_UserSet" in setup_dict:
-            self.BrakingStrengthLimit_VelControl_Percent_UserSet = float(setup_dict["BrakingStrengthLimit_VelControl_Percent_UserSet"])
+        if "BrakingStrengthLimit_VelControl_Percent_UserSet" in SetupDict:
+            self.BrakingStrengthLimit_VelControl_Percent_UserSet = float(SetupDict["BrakingStrengthLimit_VelControl_Percent_UserSet"])
 
             if self.BrakingStrengthLimit_VelControl_Percent_UserSet < 0.0 or self.BrakingStrengthLimit_VelControl_Percent_UserSet > 100.0:
                 print("PhidgetDCmotorDCC1000controller_ReubenPython2and3Class __init__: Error, BrakingStrengthLimit_VelControl_Percent_UserSet must be between 0.0 an 100.0 percent.")
@@ -616,8 +629,8 @@ class PhidgetDCmotorDCC1000controller_ReubenPython2and3Class(Frame): #Subclass t
 
         #########################################################
         #########################################################
-        if "DeadBand_PosControl_PhidgetsUnits_UserSet" in setup_dict:
-            self.DeadBand_PosControl_PhidgetsUnits_UserSet = float(setup_dict["DeadBand_PosControl_PhidgetsUnits_UserSet"])
+        if "DeadBand_PosControl_PhidgetsUnits_UserSet" in SetupDict:
+            self.DeadBand_PosControl_PhidgetsUnits_UserSet = float(SetupDict["DeadBand_PosControl_PhidgetsUnits_UserSet"])
 
             if self.DeadBand_PosControl_PhidgetsUnits_UserSet < 0.0:
                 print("PhidgetDCmotorDCC1000controller_ReubenPython2and3Class __init__: Error, DeadBand_PosControl_PhidgetsUnits_UserSet must be greater than 0.")
@@ -632,13 +645,13 @@ class PhidgetDCmotorDCC1000controller_ReubenPython2and3Class(Frame): #Subclass t
 
         #########################################################
         #########################################################
-        if "AccelerationMaxLimit_PhidgetsUnits_UserSet" in setup_dict:
+        if "AccelerationMaxLimit_PhidgetsUnits_UserSet" in SetupDict:
 
             if self.ControlMode == "position":
-                self.AccelerationMaxLimit_PhidgetsUnits_UserSet = self.PassThroughFloatValuesInRange_ExitProgramOtherwise("AccelerationMaxLimit_PhidgetsUnits_UserSet", setup_dict["AccelerationMaxLimit_PhidgetsUnits_UserSet"], 0.1, 100000.0)
+                self.AccelerationMaxLimit_PhidgetsUnits_UserSet = self.PassThroughFloatValuesInRange_ExitProgramOtherwise("AccelerationMaxLimit_PhidgetsUnits_UserSet", SetupDict["AccelerationMaxLimit_PhidgetsUnits_UserSet"], 0.1, 100000.0)
 
             elif self.ControlMode == "velocity":
-                self.AccelerationMaxLimit_PhidgetsUnits_UserSet = self.PassThroughFloatValuesInRange_ExitProgramOtherwise("AccelerationMaxLimit_PhidgetsUnits_UserSet", setup_dict["AccelerationMaxLimit_PhidgetsUnits_UserSet"], 0.1, 100.0)
+                self.AccelerationMaxLimit_PhidgetsUnits_UserSet = self.PassThroughFloatValuesInRange_ExitProgramOtherwise("AccelerationMaxLimit_PhidgetsUnits_UserSet", SetupDict["AccelerationMaxLimit_PhidgetsUnits_UserSet"], 0.1, 100.0)
 
         else:
             if self.ControlMode == "position":
@@ -653,8 +666,8 @@ class PhidgetDCmotorDCC1000controller_ReubenPython2and3Class(Frame): #Subclass t
 
         #########################################################
         #########################################################
-        if "Kp_PosControl_Gain_UserSet" in setup_dict:
-            self.Kp_PosControl_Gain_UserSet = float(setup_dict["Kp_PosControl_Gain_UserSet"])
+        if "Kp_PosControl_Gain_UserSet" in SetupDict:
+            self.Kp_PosControl_Gain_UserSet = float(SetupDict["Kp_PosControl_Gain_UserSet"])
         else:
             self.Kp_PosControl_Gain_UserSet = 20000.0
 
@@ -664,8 +677,8 @@ class PhidgetDCmotorDCC1000controller_ReubenPython2and3Class(Frame): #Subclass t
 
         #########################################################
         #########################################################
-        if "Ki_PosControl_Gain_UserSet" in setup_dict:
-            self.Ki_PosControl_Gain_UserSet = float(setup_dict["Ki_PosControl_Gain_UserSet"])
+        if "Ki_PosControl_Gain_UserSet" in SetupDict:
+            self.Ki_PosControl_Gain_UserSet = float(SetupDict["Ki_PosControl_Gain_UserSet"])
         else:
             self.Ki_PosControl_Gain_UserSet = 2.0
 
@@ -675,8 +688,8 @@ class PhidgetDCmotorDCC1000controller_ReubenPython2and3Class(Frame): #Subclass t
 
         #########################################################
         #########################################################
-        if "Kd_PosControl_Gain_UserSet" in setup_dict:
-            self.Kd_PosControl_Gain_UserSet = float(setup_dict["Kd_PosControl_Gain_UserSet"])
+        if "Kd_PosControl_Gain_UserSet" in SetupDict:
+            self.Kd_PosControl_Gain_UserSet = float(SetupDict["Kd_PosControl_Gain_UserSet"])
         else:
             self.Kd_PosControl_Gain_UserSet = 40000.0
 
@@ -686,8 +699,8 @@ class PhidgetDCmotorDCC1000controller_ReubenPython2and3Class(Frame): #Subclass t
 
         #########################################################
         #########################################################
-        if "RescaleFactor_MultipliesPhidgetsUnits_UserSet" in setup_dict:
-            self.RescaleFactor_MultipliesPhidgetsUnits_UserSet = float(setup_dict["RescaleFactor_MultipliesPhidgetsUnits_UserSet"])
+        if "RescaleFactor_MultipliesPhidgetsUnits_UserSet" in SetupDict:
+            self.RescaleFactor_MultipliesPhidgetsUnits_UserSet = float(SetupDict["RescaleFactor_MultipliesPhidgetsUnits_UserSet"])
 
             if self.RescaleFactor_MultipliesPhidgetsUnits_UserSet < 0.0:
                 print("PhidgetDCmotorDCC1000controller_ReubenPython2and3Class __init__: Error, RescaleFactor_MultipliesPhidgetsUnits_UserSet must be grater than 0.")
@@ -712,8 +725,8 @@ class PhidgetDCmotorDCC1000controller_ReubenPython2and3Class(Frame): #Subclass t
 
         #########################################################
         #########################################################
-        if "LogFileNameFullPath" in setup_dict:
-            self.LogFileNameFullPath = str(setup_dict["LogFileNameFullPath"])
+        if "LogFileNameFullPath" in SetupDict:
+            self.LogFileNameFullPath = str(SetupDict["LogFileNameFullPath"])
 
             if self.LogFileNameFullPath.find("/") == -1 and self.LogFileNameFullPath.find("\\") == -1:
                 print("PhidgetDCmotorDCC1000controller_ReubenPython2and3Class __init__:  Error, 'LogFileNameFullPath' must be FULL path (should include slashes).")
@@ -737,13 +750,13 @@ class PhidgetDCmotorDCC1000controller_ReubenPython2and3Class(Frame): #Subclass t
         #########################################################
         #########################################################
         try:
-            self.Velocity_LowPassFilter_ReubenPython2and3ClassObject = LowPassFilter_ReubenPython2and3Class(dict([("UseMedianFilterFlag", 0),
-                                                                                                            ("UseExponentialSmoothingFilterFlag", 1),                                                                                             ("ExponentialSmoothingFilterLambda", 0.2)]))
+            self.Velocity_LowPassFilter_Object = LowPassFilter_ReubenPython2and3Class(dict([("UseMedianFilterFlag", 0),
+                                                                                            ("UseExponentialSmoothingFilterFlag", 1),                                                                                             ("ExponentialSmoothingFilterLambda", 0.2)]))
             time.sleep(0.1)
-            self.VELOCITY_LOWPASSFILTER_OPEN_FLAG = self.Velocity_LowPassFilter_ReubenPython2and3ClassObject.OBJECT_CREATED_SUCCESSFULLY_FLAG
+            self.Velocity_LowPassFilter_OPEN_FLAG = self.Velocity_LowPassFilter_Object.OBJECT_CREATED_SUCCESSFULLY_FLAG
 
-            if self.LOWPASSFILTER_OPEN_FLAG != 1:
-                print("Failed to open LowPassFilter_ReubenPython2and3ClassObject.")
+            if self.Velocity_LowPassFilter_OPEN_FLAG != 1:
+                print("Failed to open Velocity_LowPassFilter_Object.")
                 self.OBJECT_CREATED_SUCCESSFULLY_FLAG = 0
                 return
 
@@ -1008,13 +1021,13 @@ class PhidgetDCmotorDCC1000controller_ReubenPython2and3Class(Frame): #Subclass t
             #########################################################
             #########################################################
             try:
-                self.DataStreamingFrequency_CalculatedFromMainThread_LowPassFilter_ReubenPython2and3ClassObject = LowPassFilter_ReubenPython2and3Class(dict([("UseMedianFilterFlag", 1),
+                self.DataStreamingFrequency_CalculatedFromMainThread_LowPassFilter_Object = LowPassFilter_ReubenPython2and3Class(dict([("UseMedianFilterFlag", 0),
                                                                                                                 ("UseExponentialSmoothingFilterFlag", 1),
                                                                                                                 ("ExponentialSmoothingFilterLambda", 0.05)])) ##new_filtered_value = k * raw_sensor_value + (1 - k) * old_filtered_value
 
             except:
                 exceptions = sys.exc_info()[0]
-                print("ArucoTagDetectionFromCameraFeed_ReubenPython3Class __init__: DataStreamingFrequency_CalculatedFromMainThread_LowPassFilter_ReubenPython2and3ClassObject, Exceptions: %s" % exceptions)
+                print("ArucoTagDetectionFromCameraFeed_ReubenPython3Class __init__: DataStreamingFrequency_CalculatedFromMainThread_LowPassFilter_Object, Exceptions: %s" % exceptions)
                 traceback.print_exc()
                 return
             #########################################################
@@ -1029,57 +1042,45 @@ class PhidgetDCmotorDCC1000controller_ReubenPython2and3Class(Frame): #Subclass t
 
             #########################################################
             #########################################################
-            if self.USE_GUI_FLAG == 1:
-                self.StartGUI(self.root)
-            else:
-                self.CurrentInputFrame = None
-            #########################################################
-            #########################################################
-
-            #########################################################
-            #########################################################
-            time.sleep(0.25)
-            #########################################################
-            #########################################################
-
-            #########################################################
-            #########################################################
             try:
+                self.PhidgetsCurrentSensor30ampDConlyVCP1100_GUIparametersDict = dict([("USE_GUI_FLAG", self.USE_GUI_FLAG),
+                                                                                    ("EnableInternal_MyPrint_Flag", 0),
+                                                                                    ("NumberOfPrintLines", 10),
+                                                                                    ("UseBorderAroundThisGuiObjectFlag", 0),
+                                                                                    ("GUI_ROW", 0),
+                                                                                    ("GUI_COLUMN", 0),
+                                                                                    ("GUI_PADX", 1),
+                                                                                    ("GUI_PADY", 1),
+                                                                                    ("GUI_ROWSPAN", 1),
+                                                                                    ("GUI_COLUMNSPAN", 1)])
 
-                self.PhidgetsCurrentSensor30ampDConlyVCP1100_ReubenPython2and3ClassObject_GUIparametersDict = dict([("USE_GUI_FLAG", self.USE_GUI_FLAG),
-                                                ("root", self.CurrentInputFrame),
-                                                ("EnableInternal_MyPrint_Flag", 0),
-                                                ("NumberOfPrintLines", 10),
-                                                ("UseBorderAroundThisGuiObjectFlag", 0),
-                                                ("GUI_ROW", 0),
-                                                ("GUI_COLUMN", 0),
-                                                ("GUI_PADX", 1),
-                                                ("GUI_PADY", 1),
-                                                ("GUI_ROWSPAN", 1),
-                                                ("GUI_COLUMNSPAN", 1)])
+                self.PhidgetsCurrentSensor30ampDConlyVCP1100_SetupDict = dict([("GUIparametersDict", self.PhidgetsCurrentSensor30ampDConlyVCP1100_GUIparametersDict),
+                                                                                ("VINT_DesiredSerialNumber", self.VINT_DetectedSerialNumber),
+                                                                                ("VINT_DesiredPortNumber", self.VINT_DesiredPortNumber_PhidgetsCurrentSensor30ampDConlyVCP1100),
+                                                                                ("DesiredDeviceID", 105),
+                                                                                ("WaitForAttached_TimeoutDuration_Milliseconds", 5000),
+                                                                                ("NameToDisplay_UserSet", "Current Sensor"),
+                                                                                ("UsePhidgetsLoggingInternalToThisClassObjectFlag", 1),
+                                                                                ("DataCallbackUpdateDeltaT_ms", 100),
+                                                                                ("CurrentSensorList_Current_Amps_ExponentialFilterLambda", [0.95])]) #new_filtered_value = k * raw_sensor_value + (1 - k) * old_filtered_value
 
-                self.PhidgetsCurrentSensor30ampDConlyVCP1100_ReubenPython2and3ClassObject_setup_dict = dict([("GUIparametersDict", self.PhidgetsCurrentSensor30ampDConlyVCP1100_ReubenPython2and3ClassObject_GUIparametersDict),
-                                                                                            ("VINT_DesiredSerialNumber", self.VINT_DetectedSerialNumber),
-                                                                                            ("VINT_DesiredPortNumber", self.VINT_DesiredPortNumber),
-                                                                                            ("DesiredDeviceID", 57),
-                                                                                            ("WaitForAttached_TimeoutDuration_Milliseconds", 5000),
-                                                                                            ("NameToDisplay_UserSet", "Current Sensor"),
-                                                                                            ("UsePhidgetsLoggingInternalToThisClassObjectFlag", 1),
-                                                                                            ("DataCallbackUpdateDeltaT_ms", 100),
-                                                                                            ("CurrentSensorList_Current_Amps_ExponentialFilterLambda", [0.95])]) #new_filtered_value = k * raw_sensor_value + (1 - k) * old_filtered_value
+                if self.USE_PhidgetsCurrentSensor30ampDConlyVCP1100_FLAG == 1:
+                    try:
+                        self.PhidgetsCurrentSensor30ampDConlyVCP1100_Object = PhidgetsCurrentSensor30ampDConlyVCP1100_ReubenPython2and3Class(self.PhidgetsCurrentSensor30ampDConlyVCP1100_SetupDict)
+                        self.PhidgetsCurrentSensor30ampDConlyVCP1100_OPEN_FLAG = self.PhidgetsCurrentSensor30ampDConlyVCP1100_Object.OBJECT_CREATED_SUCCESSFULLY_FLAG
 
-                try:
-                    self.PhidgetsCurrentSensor30ampDConlyVCP1100_ReubenPython2and3ClassObject = PhidgetsCurrentSensor30ampDConlyVCP1100_ReubenPython2and3Class(self.PhidgetsCurrentSensor30ampDConlyVCP1100_ReubenPython2and3ClassObject_setup_dict)
-                    self.DC30AmpCurrentSensor_OPEN_FLAG = self.PhidgetsCurrentSensor30ampDConlyVCP1100_ReubenPython2and3ClassObject.OBJECT_CREATED_SUCCESSFULLY_FLAG
+                        if self.PhidgetsCurrentSensor30ampDConlyVCP1100_OPEN_FLAG != 1:
+                            print("PhidgetsCurrentSensor30ampDConlyVCP1100_Object __init__: Failed to open.")
+                            return
 
-                except:
-                    exceptions = sys.exc_info()[0]
-                    print("PhidgetsCurrentSensor30ampDConlyVCP1100_ReubenPython2and3ClassObject __init__: Exceptions: %s" % exceptions, 0)
-                    traceback.print_exc()
+                    except:
+                        exceptions = sys.exc_info()[0]
+                        print("PhidgetsCurrentSensor30ampDConlyVCP1100_Object __init__: Exceptions: %s" % exceptions)
+                        traceback.print_exc()
 
             except PhidgetException as e:
                 self.PhidgetsDeviceConnectedFlag = 0
-                print("PhidgetDCmotorDCC1000controller_ReubenPython2and3Class __init__: Failed to attach PhidgetsCurrentSensor30ampDConlyVCP1100_ReubenPython2and3ClassObject, Phidget Exception %i: %s" % (e.code, e.details))
+                print("PhidgetDCmotorDCC1000controller_ReubenPython2and3Class __init__: Failed to attach PhidgetsCurrentSensor30ampDConlyVCP1100_Object, Phidget Exception %i: %s" % (e.code, e.details))
             #########################################################
             #########################################################
 
@@ -1107,13 +1108,6 @@ class PhidgetDCmotorDCC1000controller_ReubenPython2and3Class(Frame): #Subclass t
 
     ##########################################################################################################
     ##########################################################################################################
-    def __del__(self):
-        pass
-    ##########################################################################################################
-    ##########################################################################################################
-
-    ##########################################################################################################
-    ##########################################################################################################
     def CloseAllPhidgetObjects(self):
 
         try:
@@ -1121,7 +1115,8 @@ class PhidgetDCmotorDCC1000controller_ReubenPython2and3Class(Frame): #Subclass t
             self.DCmotorObject.close()
             self.TemperatureObject.close()
 
-            self.PhidgetsCurrentSensor30ampDConlyVCP1100_ReubenPython2and3ClassObject.ExitProgram_Callback()
+            if self.PhidgetsCurrentSensor30ampDConlyVCP1100_OPEN_FLAG == 1:
+                self.PhidgetsCurrentSensor30ampDConlyVCP1100_Object.ExitProgram_Callback()
 
         except PhidgetException as e:
             print("CloseAllPhidgetObjects, Phidget Exception %i: %s" % (e.code, e.details))
@@ -1142,65 +1137,200 @@ class PhidgetDCmotorDCC1000controller_ReubenPython2and3Class(Frame): #Subclass t
 
     ##########################################################################################################
     ##########################################################################################################
-    def PassThrough0and1values_ExitProgramOtherwise(self, InputNameString, InputNumber):
+    def LimitNumber_IntOutputOnly(self, min_val, max_val, test_val):
+        if test_val > max_val:
+            test_val = max_val
 
+        elif test_val < min_val:
+            test_val = min_val
+
+        else:
+            test_val = test_val
+
+        test_val = int(test_val)
+
+        return test_val
+    ##########################################################################################################
+    ##########################################################################################################
+
+    ##########################################################################################################
+    ##########################################################################################################
+    def LimitNumber_FloatOutputOnly(self, min_val, max_val, test_val):
+        if test_val > max_val:
+            test_val = max_val
+
+        elif test_val < min_val:
+            test_val = min_val
+
+        else:
+            test_val = test_val
+
+        test_val = float(test_val)
+
+        return test_val
+    ##########################################################################################################
+    ##########################################################################################################
+
+    ##########################################################################################################
+    ##########################################################################################################
+    ##########################################################################################################
+    ##########################################################################################################
+    def PassThrough0and1values_ExitProgramOtherwise(self, InputNameString, InputNumber, ExitProgramIfFailureFlag=1):
+
+        ##########################################################################################################
+        ##########################################################################################################
         try:
+
+            ##########################################################################################################
             InputNumber_ConvertedToFloat = float(InputNumber)
+            ##########################################################################################################
+
         except:
+
+            ##########################################################################################################
             exceptions = sys.exc_info()[0]
-            print("PassThrough0and1values_ExitProgramOtherwise Error. InputNumber must be a float value, Exceptions: %s" % exceptions)
-            input("Press any key to continue")
-            sys.exit()
+            print("PassThrough0and1values_ExitProgramOtherwise Error. InputNumber must be a numerical value, Exceptions: %s" % exceptions)
 
-        try:
-            if InputNumber_ConvertedToFloat == 0.0 or InputNumber_ConvertedToFloat == 1:
-                return InputNumber_ConvertedToFloat
-            else:
-                input("PassThrough0and1values_ExitProgramOtherwise Error. '" +
-                          InputNameString +
-                          "' must be 0 or 1 (value was " +
-                          str(InputNumber_ConvertedToFloat) +
-                          "). Press any key (and enter) to exit.")
-
+            ##########################
+            if ExitProgramIfFailureFlag == 1:
                 sys.exit()
+            else:
+                return -1
+            ##########################
+
+            ##########################################################################################################
+
+        ##########################################################################################################
+        ##########################################################################################################
+
+        ##########################################################################################################
+        ##########################################################################################################
+        try:
+
+            ##########################################################################################################
+            if InputNumber_ConvertedToFloat == 0.0 or InputNumber_ConvertedToFloat == 1.0:
+                return InputNumber_ConvertedToFloat
+
+            else:
+
+                print("PassThrough0and1values_ExitProgramOtherwise Error. '" +
+                      str(InputNameString) +
+                      "' must be 0 or 1 (value was " +
+                      str(InputNumber_ConvertedToFloat) +
+                      ").")
+
+                ##########################
+                if ExitProgramIfFailureFlag == 1:
+                    sys.exit()
+
+                else:
+                    return -1
+                ##########################
+
+            ##########################################################################################################
+
         except:
+
+            ##########################################################################################################
             exceptions = sys.exc_info()[0]
             print("PassThrough0and1values_ExitProgramOtherwise Error, Exceptions: %s" % exceptions)
-            input("Press any key to continue")
-            sys.exit()
+
+            ##########################
+            if ExitProgramIfFailureFlag == 1:
+                sys.exit()
+            else:
+                return -1
+            ##########################
+
+            ##########################################################################################################
+
+        ##########################################################################################################
+        ##########################################################################################################
+
+    ##########################################################################################################
+    ##########################################################################################################
     ##########################################################################################################
     ##########################################################################################################
 
     ##########################################################################################################
     ##########################################################################################################
-    def PassThroughFloatValuesInRange_ExitProgramOtherwise(self, InputNameString, InputNumber, RangeMinValue, RangeMaxValue):
+    ##########################################################################################################
+    ##########################################################################################################
+    def PassThroughFloatValuesInRange_ExitProgramOtherwise(self, InputNameString, InputNumber, RangeMinValue, RangeMaxValue, ExitProgramIfFailureFlag=1):
+
+        ##########################################################################################################
+        ##########################################################################################################
         try:
+            ##########################################################################################################
             InputNumber_ConvertedToFloat = float(InputNumber)
+            ##########################################################################################################
+
         except:
+            ##########################################################################################################
             exceptions = sys.exc_info()[0]
             print("PassThroughFloatValuesInRange_ExitProgramOtherwise Error. InputNumber must be a float value, Exceptions: %s" % exceptions)
-            input("Press any key to continue")
-            sys.exit()
+            traceback.print_exc()
 
-        try:
-            if InputNumber_ConvertedToFloat >= RangeMinValue and InputNumber_ConvertedToFloat <= RangeMaxValue:
-                return InputNumber_ConvertedToFloat
-            else:
-                input("PassThroughFloatValuesInRange_ExitProgramOtherwise Error. '" +
-                          InputNameString +
-                          "' must be in the range [" +
-                          str(RangeMinValue) +
-                          ", " +
-                          str(RangeMaxValue) +
-                          "] (value was " +
-                          str(InputNumber_ConvertedToFloat) + "). Press any key (and enter) to exit.")
-
+            ##########################
+            if ExitProgramIfFailureFlag == 1:
                 sys.exit()
+            else:
+                return -11111.0
+            ##########################
+
+            ##########################################################################################################
+
+        ##########################################################################################################
+        ##########################################################################################################
+
+        ##########################################################################################################
+        ##########################################################################################################
+        try:
+
+            ##########################################################################################################
+            InputNumber_ConvertedToFloat_Limited = self.LimitNumber_FloatOutputOnly(RangeMinValue, RangeMaxValue, InputNumber_ConvertedToFloat)
+
+            if InputNumber_ConvertedToFloat_Limited != InputNumber_ConvertedToFloat:
+                print("PassThroughFloatValuesInRange_ExitProgramOtherwise Error. '" +
+                      str(InputNameString) +
+                      "' must be in the range [" +
+                      str(RangeMinValue) +
+                      ", " +
+                      str(RangeMaxValue) +
+                      "] (value was " +
+                      str(InputNumber_ConvertedToFloat) + ")")
+
+                ##########################
+                if ExitProgramIfFailureFlag == 1:
+                    sys.exit()
+                else:
+                    return -11111.0
+                ##########################
+
+            else:
+                return InputNumber_ConvertedToFloat_Limited
+            ##########################################################################################################
+
         except:
+            ##########################################################################################################
             exceptions = sys.exc_info()[0]
             print("PassThroughFloatValuesInRange_ExitProgramOtherwise Error, Exceptions: %s" % exceptions)
-            input("Press any key to continue")
-            sys.exit()
+            traceback.print_exc()
+
+            ##########################
+            if ExitProgramIfFailureFlag == 1:
+                sys.exit()
+            else:
+                return -11111.0
+            ##########################
+
+            ##########################################################################################################
+
+        ##########################################################################################################
+        ##########################################################################################################
+
+    ##########################################################################################################
+    ##########################################################################################################
     ##########################################################################################################
     ##########################################################################################################
 
@@ -1368,7 +1498,7 @@ class PhidgetDCmotorDCC1000controller_ReubenPython2and3Class(Frame): #Subclass t
 
         if self.DataStreamingDeltaT_OnPositionChangeCallbackFunction > 0:
             self.Velocity_PhidgetsUnits_DifferentiatedRaw = (self.Position_PhidgetsUnits_FromDevice - self.Position_PhidgetsUnits_FromDevice_Last)/(self.DataStreamingDeltaT_OnPositionChangeCallbackFunction)
-            self.Velocity_PhidgetsUnits_DifferentiatedSmoothed = self.Velocity_LowPassFilter_ReubenPython2and3ClassObject.AddDataPointFromExternalProgram(self.Velocity_PhidgetsUnits_DifferentiatedRaw)["SignalOutSmoothed"]
+            self.Velocity_PhidgetsUnits_DifferentiatedSmoothed = self.Velocity_LowPassFilter_Object.AddDataPointFromExternalProgram(self.Velocity_PhidgetsUnits_DifferentiatedRaw)["SignalOutSmoothed"]
 
         self.Position_PhidgetsUnits_FromDevice_Last = self.Position_PhidgetsUnits_FromDevice
 
@@ -1467,7 +1597,7 @@ class PhidgetDCmotorDCC1000controller_ReubenPython2and3Class(Frame): #Subclass t
 
             if self.DataStreamingDeltaT_CalculatedFromMainThread != 0.0:
                 DataStreamingFrequency_CalculatedFromMainThread_TEMP = 1.0/self.DataStreamingDeltaT_CalculatedFromMainThread
-                self.DataStreamingFrequency_CalculatedFromMainThread = self.DataStreamingFrequency_CalculatedFromMainThread_LowPassFilter_ReubenPython2and3ClassObject.AddDataPointFromExternalProgram(DataStreamingFrequency_CalculatedFromMainThread_TEMP)["SignalOutSmoothed"]
+                self.DataStreamingFrequency_CalculatedFromMainThread = self.DataStreamingFrequency_CalculatedFromMainThread_LowPassFilter_Object.AddDataPointFromExternalProgram(DataStreamingFrequency_CalculatedFromMainThread_TEMP)["SignalOutSmoothed"]
 
             self.LastTime_CalculatedFromMainThread = self.CurrentTime_CalculatedFromMainThread
         except:
@@ -1776,9 +1906,9 @@ class PhidgetDCmotorDCC1000controller_ReubenPython2and3Class(Frame): #Subclass t
 
                 #################################################### GET's
                 ####################################################
-                if self.DC30AmpCurrentSensor_OPEN_FLAG == 1:
+                if self.PhidgetsCurrentSensor30ampDConlyVCP1100_OPEN_FLAG == 1:
 
-                    self.DC30AmpCurrentSensor_MostRecentDict = self.PhidgetsCurrentSensor30ampDConlyVCP1100_ReubenPython2and3ClassObject.GetMostRecentDataDict()
+                    self.DC30AmpCurrentSensor_MostRecentDict = self.PhidgetsCurrentSensor30ampDConlyVCP1100_Object.GetMostRecentDataDict()
 
                     if "Time" in self.DC30AmpCurrentSensor_MostRecentDict:
                         self.DC30AmpCurrentSensor_MostRecentDict_DC30AmpCurrentSensorList_Current_Amps_Raw = self.DC30AmpCurrentSensor_MostRecentDict["CurrentSensorList_Current_Amps_Raw"]
@@ -1831,7 +1961,9 @@ class PhidgetDCmotorDCC1000controller_ReubenPython2and3Class(Frame): #Subclass t
 
         if self.EXIT_PROGRAM_FLAG == 0:
 
-            self.MostRecentDataDict = dict([("Position_PhidgetsUnits_FromDevice", self.Position_PhidgetsUnits_FromDevice),
+            self.MostRecentDataDict = dict([("Position_PhidgetsUnits_TO_BE_SET", self.Position_PhidgetsUnits_TO_BE_SET),
+                                            ("Velocity_PhidgetsUnits_TO_BE_SET", self.Velocity_PhidgetsUnits_TO_BE_SET),
+                                            ("Position_PhidgetsUnits_FromDevice", self.Position_PhidgetsUnits_FromDevice),
                                             ("Velocity_PhidgetsUnits_FromDevice", self.Velocity_PhidgetsUnits_FromDevice),
                                             ("Velocity_PhidgetsUnits_DifferentiatedRaw", self.Velocity_PhidgetsUnits_DifferentiatedRaw),
                                             ("Velocity_PhidgetsUnits_DifferentiatedSmoothed", self.Velocity_PhidgetsUnits_DifferentiatedSmoothed),
@@ -1861,26 +1993,14 @@ class PhidgetDCmotorDCC1000controller_ReubenPython2and3Class(Frame): #Subclass t
 
     ##########################################################################################################
     ##########################################################################################################
-    def StartGUI(self, GuiParent=None):
+    def CreateGUIobjects(self, TkinterParent):
 
-        #GUI_Thread_ThreadingObject = threading.Thread(target=self.GUI_Thread, args=(GuiParent,))
-        #GUI_Thread_ThreadingObject.setDaemon(True) #Should mean that the GUI thread is destroyed automatically when the main thread is destroyed.
-        #GUI_Thread_ThreadingObject.start()
-
-        self.GUI_Thread(GuiParent)
-    ##########################################################################################################
-    ##########################################################################################################
-
-    ##########################################################################################################
-    ##########################################################################################################
-    def GUI_Thread(self, parent=None):
-
-        print("Starting the GUI_Thread for PhidgetDCmotorDCC1000controller_ReubenPython2and3Class object.")
+        print("PhidgetDCmotorDCC1000controller_ReubenPython2and3Class, TkinterParent event fired.")
 
         ###########################################################
         ###########################################################
-        self.root = parent
-        self.parent = parent
+        self.root = TkinterParent
+        self.parent = TkinterParent
         ###########################################################
         ###########################################################
 
@@ -1935,7 +2055,8 @@ class PhidgetDCmotorDCC1000controller_ReubenPython2and3Class(Frame): #Subclass t
         ###########################################################
         ###########################################################
 
-        ###########################################################
+        '''
+        ########################################################### Cannot set the engaged state in velocity mode, so we're replacing the engaged button with more general stop button
         ###########################################################
         self.EngagedStateButton = Button(self.AllButtonsFrame, text='Engaged: x', state="normal", width=self.Button_Width, command=lambda i=1: self.EngagedStateButtonResponse())
         self.EngagedStateButton.grid(row=0, column=1, padx=1, pady=1, columnspan=1, rowspan=1)
@@ -1943,10 +2064,11 @@ class PhidgetDCmotorDCC1000controller_ReubenPython2and3Class(Frame): #Subclass t
             self.EngagedStateButton["state"] = "disabled"
         ###########################################################
         ###########################################################
+        '''
 
         ###########################################################
         ###########################################################
-        self.StopMotorButton = Button(self.AllButtonsFrame, text='Stop Motor', state="normal", width=self.Button_Width, command=lambda i=1: self.StopMotorButtonResponse())
+        self.StopMotorButton = Button(self.AllButtonsFrame, text='Stop Motor', state="normal", width=self.Button_Width*2, command=lambda i=1: self.StopMotorButtonResponse())
         self.StopMotorButton.grid(row=0, column=2, padx=1, pady=1, columnspan=1, rowspan=1)
         self.StopMotorButton["bg"] = self.TKinter_LightGreenColor
         ###########################################################
@@ -2140,6 +2262,13 @@ class PhidgetDCmotorDCC1000controller_ReubenPython2and3Class(Frame): #Subclass t
 
         ###########################################################
         ###########################################################
+        if self.PhidgetsCurrentSensor30ampDConlyVCP1100_OPEN_FLAG == 1:
+            self.PhidgetsCurrentSensor30ampDConlyVCP1100_Object.CreateGUIobjects(TkinterParent=self.CurrentInputFrame)
+        ###########################################################
+        ###########################################################
+
+        ###########################################################
+        ###########################################################
         self.PrintToGui_Label = Label(self.myFrame, text="PrintToGui_Label", width=75)
         if self.EnableInternal_MyPrint_Flag == 1:
             self.PrintToGui_Label.grid(row=4, column=0, padx=1, pady=1, columnspan=1, rowspan=10)
@@ -2225,6 +2354,7 @@ class PhidgetDCmotorDCC1000controller_ReubenPython2and3Class(Frame): #Subclass t
     ##########################################################################################################
     ##########################################################################################################
 
+    '''
     ##########################################################################################################
     ##########################################################################################################
     def EngagedStateButtonResponse(self):
@@ -2236,6 +2366,7 @@ class PhidgetDCmotorDCC1000controller_ReubenPython2and3Class(Frame): #Subclass t
 
     ##########################################################################################################
     ##########################################################################################################
+    '''
 
     ##########################################################################################################
     ##########################################################################################################
@@ -2273,13 +2404,19 @@ class PhidgetDCmotorDCC1000controller_ReubenPython2and3Class(Frame): #Subclass t
                 #######################################################
                 try:
                     #########################################################
-                    self.EngagedStateButton["text"] = "Engaged: " + str(self.EngagedState_PhidgetsUnits_FromDevice)
+                    self.StopMotorButton["text"] = "Stop Motor\nEngaged State: " + str(self.EngagedState_PhidgetsUnits_FromDevice)
+
+                    if self.ControlMode == "velocity":
+                        self.StopMotorButton["text"] = self.StopMotorButton["text"]  + "\n(cannot disengaged in VelMode)"
+
                     if self.EngagedState_PhidgetsUnits_FromDevice == 0:
-                        self.EngagedStateButton["bg"] = self.TKinter_LightRedColor
+                        self.StopMotorButton["bg"] = self.TKinter_LightRedColor
+
                     elif self.EngagedState_PhidgetsUnits_FromDevice == 1:
-                        self.EngagedStateButton["bg"] = self.TKinter_LightGreenColor
+                        self.StopMotorButton["bg"] = self.TKinter_LightGreenColor
+
                     else:
-                        self.EngagedStateButton["bg"] = self.TKinter_DefaultGrayColor
+                        self.StopMotorButton["bg"] = self.TKinter_DefaultGrayColor
                     #########################################################
 
                     #########################################################
@@ -2361,8 +2498,8 @@ class PhidgetDCmotorDCC1000controller_ReubenPython2and3Class(Frame): #Subclass t
                     #######################################################
 
                     #########################################################
-                    if self.DC30AmpCurrentSensor_OPEN_FLAG == 1:
-                        self.PhidgetsCurrentSensor30ampDConlyVCP1100_ReubenPython2and3ClassObject.GUI_update_clock()
+                    if self.PhidgetsCurrentSensor30ampDConlyVCP1100_OPEN_FLAG == 1:
+                        self.PhidgetsCurrentSensor30ampDConlyVCP1100_Object.GUI_update_clock()
                     #########################################################
 
                 except:
@@ -2380,44 +2517,6 @@ class PhidgetDCmotorDCC1000controller_ReubenPython2and3Class(Frame): #Subclass t
         #######################################################
         #######################################################
         #######################################################
-
-    ##########################################################################################################
-    ##########################################################################################################
-
-    ##########################################################################################################
-    ##########################################################################################################
-    def LimitNumber_IntOutputOnly(self, min_val, max_val, test_val):
-        if test_val > max_val:
-            test_val = max_val
-
-        elif test_val < min_val:
-            test_val = min_val
-
-        else:
-            test_val = test_val
-
-        test_val = int(test_val)
-
-        return test_val
-
-    ##########################################################################################################
-    ##########################################################################################################
-
-    ##########################################################################################################
-    ##########################################################################################################
-    def LimitNumber_FloatOutputOnly(self, min_val, max_val, test_val):
-        if test_val > max_val:
-            test_val = max_val
-
-        elif test_val < min_val:
-            test_val = min_val
-
-        else:
-            test_val = test_val
-
-        test_val = float(test_val)
-
-        return test_val
 
     ##########################################################################################################
     ##########################################################################################################
@@ -2628,12 +2727,12 @@ class PhidgetDCmotorDCC1000controller_ReubenPython2and3Class(Frame): #Subclass t
             ##########################################################################################################
             if isinstance(DictToPrint[Key], dict): #RECURSION
                 ProperlyFormattedStringForPrinting = ProperlyFormattedStringForPrinting + \
-                                                     Key + ":\n" + \
+                                                     str(Key) + ":\n" + \
                                                      self.ConvertDictToProperlyFormattedStringForPrinting(DictToPrint[Key], NumberOfDecimalsPlaceToUse, NumberOfEntriesPerLine, NumberOfTabsBetweenItems)
 
             else:
                 ProperlyFormattedStringForPrinting = ProperlyFormattedStringForPrinting + \
-                                                     Key + ": " + \
+                                                     str(Key) + ": " + \
                                                      self.ConvertFloatToStringWithNumberOfLeadingNumbersAndDecimalPlaces_NumberOrListInput(DictToPrint[Key], 0, NumberOfDecimalsPlaceToUse)
             ##########################################################################################################
 
@@ -2649,6 +2748,5 @@ class PhidgetDCmotorDCC1000controller_ReubenPython2and3Class(Frame): #Subclass t
         return ProperlyFormattedStringForPrinting
     ##########################################################################################################
     ##########################################################################################################
-
 
 
