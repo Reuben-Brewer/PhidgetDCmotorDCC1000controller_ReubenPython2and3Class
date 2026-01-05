@@ -443,20 +443,19 @@ class PhidgetsCurrentSensor30ampDConlyVCP1100_ReubenPython2and3Class(Frame): #Su
             for CurrentSensorChannel in range(0, self.NumberOfCurrentSensors):
 
                 #########################################################
-                DictOfVariableFilterSettings = dict([("Current", dict([("UseMedianFilterFlag", 1), ("UseExponentialSmoothingFilterFlag", 1),("ExponentialSmoothingFilterLambda", self.CurrentSensorList_Current_Amps_ExponentialFilterLambda[CurrentSensorChannel])])),
-                                                    ("CurrentDerivative", dict([("UseMedianFilterFlag", 1), ("UseExponentialSmoothingFilterFlag", 1),("ExponentialSmoothingFilterLambda", self.CurrentSensorList_CurrentDerivative_AmpsPerSec_ExponentialFilterLambda[CurrentSensorChannel])]))])
+                DictOfVariableFilterSettings = dict([("Current", dict([("UseMedianFilterFlag", 0), ("UseExponentialSmoothingFilterFlag", 1),("ExponentialSmoothingFilterLambda", self.CurrentSensorList_Current_Amps_ExponentialFilterLambda[CurrentSensorChannel])])),
+                                                    ("CurrentDerivative", dict([("UseMedianFilterFlag", 0), ("UseExponentialSmoothingFilterFlag", 1),("ExponentialSmoothingFilterLambda", self.CurrentSensorList_CurrentDerivative_AmpsPerSec_ExponentialFilterLambda[CurrentSensorChannel])]))])
 
-                LowPassFilterForDictsOfLists_ReubenPython2and3ClassObject_SetupDict = dict([("DictOfVariableFilterSettings", DictOfVariableFilterSettings)])
+                LowPassFilterForDictsOfLists_SetupDict = dict([("DictOfVariableFilterSettings", DictOfVariableFilterSettings)])
 
-                LowPassFilterForDictsOfLists_ReubenPython2and3ClassObject = LowPassFilterForDictsOfLists_ReubenPython2and3Class(LowPassFilterForDictsOfLists_ReubenPython2and3ClassObject_SetupDict)
+                LowPassFilterForDictsOfLists_Object = LowPassFilterForDictsOfLists_ReubenPython2and3Class(LowPassFilterForDictsOfLists_SetupDict)
                 #########################################################
 
-                self.CurrentSensorList_LowPassFilter_ReubenPython2and3ClassObject.append(LowPassFilterForDictsOfLists_ReubenPython2and3ClassObject)
-                time.sleep(0.1)
-                LOWPASSFILTER_OPEN_FLAG = self.CurrentSensorList_LowPassFilter_ReubenPython2and3ClassObject[CurrentSensorChannel].OBJECT_CREATED_SUCCESSFULLY_FLAG
+                self.CurrentSensorList_LowPassFilter_ReubenPython2and3ClassObject.append(LowPassFilterForDictsOfLists_Object)
+                LowPassFilterForDictsOfLists_OPEN_FLAG = self.CurrentSensorList_LowPassFilter_ReubenPython2and3ClassObject[CurrentSensorChannel].OBJECT_CREATED_SUCCESSFULLY_FLAG
 
-                if LOWPASSFILTER_OPEN_FLAG != 1:
-                    print("PhidgetsCurrentSensor30ampDConlyVCP1100_ReubenPython2and3Class __init__: Failed to open LowPassFilter_ReubenPython2and3ClassObject.")
+                if LowPassFilterForDictsOfLists_OPEN_FLAG != 1:
+                    print("PhidgetsCurrentSensor30ampDConlyVCP1100_ReubenPython2and3Class __init__: Failed to open LowPassFilterForDictsOfLists_Object.")
                     return
 
         except:
